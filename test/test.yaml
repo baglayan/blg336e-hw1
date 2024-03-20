@@ -1,9 +1,9 @@
 - compile:
-    run: g++ main.cpp -o main -Wall -Werror
+    run: g++ ../src/main.cpp -o ../src/main -Wall -Werror
     blocker: true
 
 - DFS_k=5_map1:
-    run: ./main 1 5 map1.txt
+    run: ../src/main 1 5 ../data/map1.txt
     script:
       - expect: "Algorithm: DFS\r\n"
       - expect: "Map: map1.txt\r\n"
@@ -13,6 +13,7 @@
       - expect: "Colony 4: Size = 4, Resource Type = 3\r\n"
       - expect: "Colony 5: Size = 4, Resource Type = 4\r\n"
       - expect: _EOF_
+    points: 1
     
 
 - DFS_k=3_map2:
@@ -23,6 +24,7 @@
       - expect: "Colony 1: Size = 6, Resource Type = 2\r\n"
       - expect: "Colony 2: Size = 4, Resource Type = 1\r\n"
       - expect: _EOF_
+    points: 1
     
 
 - DFS_k=3_map3:
@@ -33,6 +35,7 @@
       - expect: "Colony 1: Size = 1, Resource Type = 1\r\n"
       - expect: "Colony 2: Size = 1, Resource Type = 2\r\n"
       - expect: _EOF_
+    points: 1
     
 
 - DFS_k=5_map4:
@@ -46,6 +49,7 @@
       - expect: "Colony 4: Size = 9, Resource Type = 5\r\n"
       - expect: "Colony 5: Size = 9, Resource Type = 5\r\n"
       - expect: _EOF_
+    points: 1
     
 
 - DFS_k=1_map5:
@@ -55,6 +59,7 @@
       - expect: "Map: map5.txt\r\n"
       - expect: "No colonies found.\r\n"
       - expect: _EOF_
+    points: 1
     
 
 - BFS_k=5_map1:
@@ -68,6 +73,7 @@
       - expect: "Colony 4: Size = 4, Resource Type = 3\r\n"
       - expect: "Colony 5: Size = 4, Resource Type = 4\r\n"
       - expect: _EOF_
+    points: 1
     
 
 - BFS_k=3_map2:
@@ -78,6 +84,7 @@
       - expect: "Colony 1: Size = 6, Resource Type = 2\r\n"
       - expect: "Colony 2: Size = 4, Resource Type = 1\r\n"
       - expect: _EOF_
+    points: 1
     
 
 - BFS_k=3_map3:
@@ -88,6 +95,7 @@
       - expect: "Colony 1: Size = 1, Resource Type = 1\r\n"
       - expect: "Colony 2: Size = 1, Resource Type = 2\r\n"
       - expect: _EOF_
+    points: 1
     
 
 - BFS_k=5_map4:
@@ -101,6 +109,7 @@
       - expect: "Colony 4: Size = 9, Resource Type = 5\r\n"
       - expect: "Colony 5: Size = 9, Resource Type = 5\r\n"
       - expect: _EOF_
+    points: 1
     
 
 - BFS_k=1_map5:
@@ -110,4 +119,5 @@
       - expect: "Map: map5.txt\r\n"
       - expect: "No colonies found.\r\n"
       - expect: _EOF_
+    points: 1
     

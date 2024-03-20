@@ -19,8 +19,6 @@
 
 /* INCLUDE ANY OTHER NECESSARY LIBRARIES HERE */
 /* START YOUR CODE HERE */
-
-
 /* END YOUR CODE HERE */
 
 using namespace std;
@@ -31,6 +29,8 @@ using namespace std::chrono;
 
 /* END YOUR CODE HERE */
 
+
+
 /**
  * Perform Depth-First Search (DFS) traversal on a map.
  * 
@@ -40,10 +40,9 @@ using namespace std::chrono;
  * @param resource The resource value to search for during the traversal.
  * @return The size of the colony found during the DFS traversal.
  */
-int dfs(vector<vector<int>>& map, int row, int col, int resource) {
+int dfs(vector<vector<int>>& map, int row, int col, int resource, vector<vector<bool>>& visited) {
 
     /* START YOUR CODE HERE */
-
 
     /* END YOUR CODE HERE */
 
@@ -59,10 +58,9 @@ int dfs(vector<vector<int>>& map, int row, int col, int resource) {
  * @param resource The resource value to search for during the traversal.
  * @return The size of the colony found during the BFS traversal.
  */
-int bfs(vector<vector<int>>& map, int row, int col, int resource) {
+int bfs(vector<vector<int>>& map, int row, int col, int resource, vector<vector<bool>>& visited) {
     
     /* START YOUR CODE HERE */
-
 
     /* END YOUR CODE HERE */
 
@@ -82,7 +80,6 @@ vector<pair<int, int>> top_k_largest_colonies(vector<vector<int>>& map, bool use
     
     /* START YOUR CODE HERE */
 
-
     /* END YOUR CODE HERE */
 
     auto stop = high_resolution_clock::now();                       // Stop measuring time
@@ -90,7 +87,6 @@ vector<pair<int, int>> top_k_largest_colonies(vector<vector<int>>& map, bool use
     cout << "Time taken: " << duration.count() << " nanoseconds" << endl;
 
     /* START YOUR CODE HERE */
-
 
     /* END YOUR CODE HERE */
 
