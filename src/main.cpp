@@ -19,6 +19,15 @@
 
 /* INCLUDE ANY OTHER NECESSARY LIBRARIES HERE */
 /* START YOUR CODE HERE */
+#include <tuple>        // For std::tie
+#include <numeric>      // For std::iota
+#include <algorithm>    // For std::lower_bound
+
+#define GRAY 0          // for bfs and dfs
+#define BLACK -1
+#define NODE make_pair(row, col)
+
+#define RESOURCE_ID_MAX 5
 /* END YOUR CODE HERE */
 
 using namespace std;
@@ -27,6 +36,48 @@ using namespace std::chrono;
 /* USE HERE IF YOU NEED TO DEFINE EXTRA FUNCTIONS */
 /* START YOUR CODE HERE */
 
+/**
+ * @brief Get the Map Dimensions object
+ * 
+ * @param map The map represented as a 2D vector of integers.
+ * @return A tuple map dimensions (rows, columns).
+ */
+pair<int, int> getMapDimensions(vector<vector<int>> map)
+{
+    //      rows        columns
+    return {map.size(), map[0].size()};
+}
+
+vector<pair<int,int>> getAdjacent(pair<int,int> node, int rows, int cols)
+{
+    pair<int,int> top, left, bottom, right;
+
+    top = make_pair(node.first, ((node.second - 1) % cols + cols) % cols);
+    left = make_pair(((node.first - 1) % rows + rows) % rows, node.second);
+    bottom = make_pair(node.first, ((node.second + 1) % cols + cols) % cols);
+    right = make_pair(((node.first + 1) % rows + rows) % rows, node.second);
+
+    return {top, left, bottom, right};
+}
+
+void dfs_visit(vector<vector<int>>& map, int row, int col, int rows, int cols, int resource, vector<vector<int>>& color, int &colonySize)
+{
+    color[row][col] = GRAY;
+
+    vector<pair<int,int>> adj = getAdjacent(NODE, rows, cols);
+
+    for (const auto &v : adj)
+    {
+        if (color[v.first][v.second] > GRAY && map[v.first][v.second] == resource)
+        {
+            dfs_visit(map, v.first, v.second, rows, cols, resource, color, colonySize);
+        }
+    }
+
+    color[row][col] = BLACK;
+    map[row][col] = BLACK;
+    colonySize++;
+}
 /* END YOUR CODE HERE */
 
 
@@ -40,10 +91,47 @@ using namespace std::chrono;
  * @param resource The resource value to search for during the traversal.
  * @return The size of the colony found during the DFS traversal.
  */
-int dfs(vector<vector<int>>& map, int row, int col, int resource, vector<vector<bool>>& visited) {
+int dfs(vector<vector<int>>& map, int row, int col, int resource) {
 
     /* START YOUR CODE HERE */
+    int colonySize = 0;
 
+    int rows, cols;
+    tie(rows, cols) = getMapDimensions(map);
+
+    vector<vector<int>> color;
+    color = map;
+
+    stack<pair<int,int>> s;
+    s.push(NODE);
+
+    while(!s.empty())
+    {
+        pair<int,int> u = s.top();
+        s.pop();
+
+        if (color[u.first][u.second] <= GRAY || map[u.first][u.second] != resource)
+        {
+            continue;
+        }
+
+        color[u.first][u.second] = GRAY;
+
+        vector<pair<int,int>> adj = getAdjacent(u, rows, cols);
+        for (const auto &v : adj)
+        {
+            if(color[v.first][v.second] > GRAY && map[v.first][v.second] == resource)
+            {
+                s.push(make_pair(v.first, v.second));
+            }
+        }
+
+        color[u.first][u.second] = BLACK;
+        map[u.first][u.second] = BLACK;
+        colonySize++;
+    }
+
+    return colonySize;
     /* END YOUR CODE HERE */
 
 }
@@ -58,10 +146,43 @@ int dfs(vector<vector<int>>& map, int row, int col, int resource, vector<vector<
  * @param resource The resource value to search for during the traversal.
  * @return The size of the colony found during the BFS traversal.
  */
-int bfs(vector<vector<int>>& map, int row, int col, int resource, vector<vector<bool>>& visited) {
+int bfs(vector<vector<int>>& map, int row, int col, int resource) {
     
     /* START YOUR CODE HERE */
+    int colonySize = 0;
 
+    int rows, cols;
+    tie(rows, cols) = getMapDimensions(map);
+
+    vector<vector<int>> color;
+
+    color = map;
+    color[row][col] = GRAY;
+
+    queue<pair<int,int>> q;
+    q.push(NODE);
+
+    while(!q.empty())
+    {
+        pair<int,int> u = q.front();
+        q.pop();
+
+        vector<pair<int,int>> adj = getAdjacent(u, rows, cols);
+
+        for (const auto &v : adj)
+        {
+            if (color[v.first][v.second] > GRAY && map[v.first][v.second] == resource)
+            {
+                color[v.first][v.second] = GRAY;
+                q.push(v);
+            }
+        }
+        color[u.first][u.second] = BLACK;
+        map[u.first][u.second] = BLACK;
+        colonySize++;
+    }
+
+    return colonySize;
     /* END YOUR CODE HERE */
 
 }
@@ -69,7 +190,7 @@ int bfs(vector<vector<int>>& map, int row, int col, int resource, vector<vector<
 /**
  * Finds the top-k largest colonies in a given map.
  *
- * @param map The map represented as a 2D vector of integers.
+ * @param map The map represented as a 2D vector of integers. Visited cells have the value 0.
  * @param useDFS A boolean flag indicating whether to use Depth-First Search (DFS) or Breadth-First Search (BFS) algorithm.
  * @param k The number of top colonies to find.
  * @return A vector of pairs representing the size and resource type of the top-k largest colonies.
@@ -80,6 +201,60 @@ vector<pair<int, int>> top_k_largest_colonies(vector<vector<int>>& map, bool use
     
     /* START YOUR CODE HERE */
 
+    // Vector of pairs that will hold top k largest colonies.
+    vector<pair<int, int>> result;
+
+    // Return result as is (empty) if the map too is empty.
+    if (map.empty())
+    {
+        return result;
+    }
+
+    // Allow specification of arbitrary number of resource types.
+    vector<int> resourceTypes(RESOURCE_ID_MAX);
+    iota(resourceTypes.begin(), resourceTypes.end(), 1);
+
+    int rows, cols;
+    tie(rows, cols) = getMapDimensions(map);
+
+    for (const auto rt : resourceTypes)
+    {
+        for (int row = 0; row < rows; row++)
+        {
+            for (int col = 0; col < cols; col++)
+            {
+                // If it's visited it won't have the resource type number anyway, as they start from 1
+                if (map[row][col] == rt)
+                {
+                    const auto colonySize = useDFS ? dfs(map, row, col, rt) : bfs(map, row, col, rt);
+
+                    // Insert new item into the already sorted result vector.
+                    // Initially, result vector is empty, thus "sorted".
+                    const auto resultItem = make_pair(colonySize, rt);
+                    const auto place = lower_bound
+                    (
+                        result.begin(), result.end(), resultItem,
+                        [](pair<int, int> a, pair<int,int> b)
+                        {
+                            return
+                            (
+                                a.first == b.first
+                                ? a.second < b.second
+                                : a.first > b.first
+                            );
+                        }
+                    );
+                    result.insert(place, resultItem);
+                }
+            }
+        }
+    }
+
+    if(k < result.size())
+    {
+        result.erase(result.begin() + k, result.end());
+    }
+
     /* END YOUR CODE HERE */
 
     auto stop = high_resolution_clock::now();                       // Stop measuring time
@@ -87,7 +262,7 @@ vector<pair<int, int>> top_k_largest_colonies(vector<vector<int>>& map, bool use
     cout << "Time taken: " << duration.count() << " nanoseconds" << endl;
 
     /* START YOUR CODE HERE */
-
+    return result;
     /* END YOUR CODE HERE */
 
 }
