@@ -59,25 +59,6 @@ vector<pair<int,int>> getAdjacent(pair<int,int> node, int rows, int cols)
 
     return {top, left, bottom, right};
 }
-
-void dfs_visit(vector<vector<int>>& map, int row, int col, int rows, int cols, int resource, vector<vector<int>>& color, int &colonySize)
-{
-    color[row][col] = GRAY;
-
-    vector<pair<int,int>> adj = getAdjacent(NODE, rows, cols);
-
-    for (const auto &v : adj)
-    {
-        if (color[v.first][v.second] > GRAY && map[v.first][v.second] == resource)
-        {
-            dfs_visit(map, v.first, v.second, rows, cols, resource, color, colonySize);
-        }
-    }
-
-    color[row][col] = BLACK;
-    map[row][col] = BLACK;
-    colonySize++;
-}
 /* END YOUR CODE HERE */
 
 
