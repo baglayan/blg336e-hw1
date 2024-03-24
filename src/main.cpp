@@ -48,6 +48,15 @@ pair<int, int> getMapDimensions(vector<vector<int>> map)
     return {map.size(), map[0].size()};
 }
 
+/**
+ * @brief Get adjacent nodes of the current node,
+ *        while considering the circular nature of the map.
+ * 
+ * @param node The node represented as a pair of integers.
+ * @param rows The total number of rows in the map.
+ * @param cols The total number of columns in the map.
+ * @return A pair vector with the adjacent nodes.
+ */
 vector<pair<int,int>> getAdjacent(pair<int,int> node, int rows, int cols)
 {
     pair<int,int> top, left, bottom, right;
@@ -77,38 +86,53 @@ int dfs(vector<vector<int>>& map, int row, int col, int resource) {
     /* START YOUR CODE HERE */
     int colonySize = 0;
 
+    // Get the dimensions of the map.
     int rows, cols;
     tie(rows, cols) = getMapDimensions(map);
 
+    // Auxiliary map to keep track of node status.
     vector<vector<int>> color;
     color = map;
 
+    // Stack to keep track of nodes to be processed.
     stack<pair<int,int>> s;
     s.push(NODE);
 
+    // While there are nodes to be processed:
     while(!s.empty())
     {
+        // Get the top node of the stack.
         pair<int,int> u = s.top();
         s.pop();
-
+        
+        // If the node is visited or has a different resource type, skip it.
         if (color[u.first][u.second] <= GRAY || map[u.first][u.second] != resource)
         {
             continue;
         }
 
+        // Color the current node as GRAY.
+        // GRAY denotes that the node is visited but not yet fully processed.
         color[u.first][u.second] = GRAY;
 
+        // Get adjacent nodes of the current node.
         vector<pair<int,int>> adj = getAdjacent(u, rows, cols);
+        
         for (const auto &v : adj)
         {
+            // If the adjacent node is not visited and has the same resource type:
             if(color[v.first][v.second] > GRAY && map[v.first][v.second] == resource)
             {
+                // Push the adjacent node into to the stack.
                 s.push(make_pair(v.first, v.second));
             }
         }
 
+        // Color u as BLACK, as it is fully processed.
         color[u.first][u.second] = BLACK;
         map[u.first][u.second] = BLACK;
+
+        // Increment the colony size.
         colonySize++;
     }
 
@@ -132,34 +156,50 @@ int bfs(vector<vector<int>>& map, int row, int col, int resource) {
     /* START YOUR CODE HERE */
     int colonySize = 0;
 
+    // Get the dimensions of the map.
     int rows, cols;
     tie(rows, cols) = getMapDimensions(map);
 
+    // Auxiliary map to keep track of node status.
     vector<vector<int>> color;
-
     color = map;
+
+    // Color the current node as GRAY.
+    // GRAY denotes that the node is visited but not yet fully processed.
     color[row][col] = GRAY;
 
+    // Queue to keep track of nodes to be processed.
     queue<pair<int,int>> q;
+
+    // Push the current node to the queue.
     q.push(NODE);
 
+    // While there are nodes to be processed:
     while(!q.empty())
     {
+        // Get the front node of the queue.
         pair<int,int> u = q.front();
         q.pop();
 
+        // Get adjacent nodes of the current node.
         vector<pair<int,int>> adj = getAdjacent(u, rows, cols);
 
         for (const auto &v : adj)
         {
+            // If the adjacent node is not visited and has the same resource type:
             if (color[v.first][v.second] > GRAY && map[v.first][v.second] == resource)
             {
+                // Color the adjacent node as GRAY and push it to the queue.
                 color[v.first][v.second] = GRAY;
                 q.push(v);
             }
         }
+
+        // Color u as BLACK, as it is fully processed.
         color[u.first][u.second] = BLACK;
         map[u.first][u.second] = BLACK;
+
+        // Increment the colony size.
         colonySize++;
     }
 
@@ -193,8 +233,11 @@ vector<pair<int, int>> top_k_largest_colonies(vector<vector<int>>& map, bool use
 
     // Allow specification of arbitrary number of resource types.
     vector<int> resourceTypes(RESOURCE_ID_MAX);
+
+    // Fill up resourceTypes with increasing integers.
     iota(resourceTypes.begin(), resourceTypes.end(), 1);
 
+    // Get the dimensions of the map.
     int rows, cols;
     tie(rows, cols) = getMapDimensions(map);
 
@@ -207,11 +250,13 @@ vector<pair<int, int>> top_k_largest_colonies(vector<vector<int>>& map, bool use
                 // If it's visited it won't have the resource type number anyway, as they start from 1
                 if (map[row][col] == rt)
                 {
+                    // Calculate colony size using the appropriate algorithm specified from the command line.
                     const auto colonySize = useDFS ? dfs(map, row, col, rt) : bfs(map, row, col, rt);
-
-                    // Insert new item into the already sorted result vector.
+                    
                     // Initially, result vector is empty, thus "sorted".
                     const auto resultItem = make_pair(colonySize, rt);
+
+                    // Find the appropriate place to insert the new item.
                     const auto place = lower_bound
                     (
                         result.begin(), result.end(), resultItem,
@@ -225,12 +270,15 @@ vector<pair<int, int>> top_k_largest_colonies(vector<vector<int>>& map, bool use
                             );
                         }
                     );
+
+                    // Insert new item to its appropriate place.
                     result.insert(place, resultItem);
                 }
             }
         }
     }
 
+    // Erase the trailing, unsolicited elements.
     if(k < result.size())
     {
         result.erase(result.begin() + k, result.end());
