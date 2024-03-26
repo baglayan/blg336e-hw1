@@ -1,0 +1,17 @@
+
+Algorithm: DFS - ../data/map1.txt (8x8) - Time: 136584 nanoseconds
+Algorithm: DFS - ../data/map2.txt (2x5) - Time: 12917 nanoseconds
+Algorithm: DFS - ../data/map3.txt (0x2) - Time: 8250 nanoseconds
+Algorithm: DFS - ../data/map4.txt (23x16) - Time: 942667 nanoseconds
+Algorithm: DFS - ../data/map5.txt (0x0) - Time:  nanoseconds
+Algorithm: DFS - ../data/map6.txt (41x35) - Time: 8278959 nanoseconds
+Algorithm: DFS - ../data/map7.txt (51x90) - Time: 32487834 nanoseconds
+Algorithm: DFS - ../data/map8.txt (501x500) - Time: 55515470081 nanoseconds
+Algorithm: BFS - ../data/map1.txt (8x8) - Time: 60834 nanoseconds
+Algorithm: BFS - ../data/map2.txt (2x5) - Time: 6875 nanoseconds
+Algorithm: BFS - ../data/map3.txt (0x2) - Time: 4792 nanoseconds
+Algorithm: BFS - ../data/map4.txt (23x16) - Time: 621792 nanoseconds
+Algorithm: BFS - ../data/map5.txt (0x0) - Time:  nanoseconds
+Algorithm: BFS - ../data/map6.txt (41x35) - Time: 7184334 nanoseconds
+Algorithm: BFS - ../data/map7.txt (51x90) - Time: 30383667 nanoseconds
+Algorithm: BFS - ../data/map8.txt (501x500) - Time: 55241277165 nanoseconds
