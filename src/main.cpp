@@ -37,7 +37,7 @@ using namespace std::chrono;
 /* START YOUR CODE HERE */
 
 /**
- * @brief Get the Map Dimensions object
+ * @brief Get the dimensions of the map.
  * 
  * @param map The map represented as a 2D vector of integers.
  * @return A tuple map dimensions (rows, columns).
@@ -117,7 +117,6 @@ int dfs(vector<vector<int>>& map, int row, int col, int resource) {
 
         // Get adjacent nodes of the current node.
         vector<pair<int,int>> adj = getAdjacent(u, rows, cols);
-        
         for (const auto &v : adj)
         {
             // If the adjacent node is not visited and has the same resource type:
